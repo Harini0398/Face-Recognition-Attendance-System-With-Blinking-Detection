@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { border: 1px solid black; padding: 6px; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center;">Attendance Logs Report</h2>
+
+<table>
+    <tr>
+        <th>Full Name</th>
+        <th>Roll No</th>
+        <th>Department</th>
+        <th>Year</th>
+        <th>Date</th>
+        <th>Login Time</th>
+        <th>Logout Time</th>
+        <th>Duration</th>
+    </tr>
+    {% for log in attendance_logs %}
+    <tr>
+        <td>{{ log.student.Fullname }}</td>
+        <td>{{ log.student.Roll_no }}</td>
+        <td>{{ log.student.Department.Name }}</td>
+        <td>{{ log.student.Year.Year }}</td>
+        <td>{{ log.date }}</td>
+        <td>{{ log.login_time }}</td>
+        <td>{{ log.logout_time|default:"-" }}</td>
+        <td>{{ log.duration|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

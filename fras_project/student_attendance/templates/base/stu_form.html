@@ -1,0 +1,134 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Form</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+
+    <div class="container">
+        <div class="card shadow p-4">
+            <h3 class="mb-4 text-center">Student Registration Form</h3>
+
+            <form method="POST" enctype="multipart/form-data" id="student-form">
+                {% csrf_token %}
+
+                
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                
+                <div class="mb-4 text-center">
+                    <video id="webcam" autoplay playsinline width="320" height="240" class="border rounded shadow"></video>
+                    <canvas id="captured-frame" width="320" height="240" class="border rounded shadow mt-3" style="display: none;"></canvas>
+                    <input type="hidden" name="captured_image" id="captured-image-input">
+                </div>
+
+                
+                <div class="mb-4 text-center">
+                    <button type="button" onclick="captureFrame()" class="btn btn-outline-primary me-2">Capture Photo</button>
+                    <button type="button" onclick="resetFrame()" class="btn btn-outline-secondary me-2">Reset Photo</button>
+                    <button type="button" id="train-btn" onclick="startTraining()" class="btn btn-outline-success">Train (15 Frames)</button>
+                </div>
+
+                
+                <div class="text-center">
+                    <input type="submit" value="Submit" id="submit-btn" class="btn btn-primary px-5" disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('captured-frame');
+        const context = canvas.getContext('2d');
+        const capturedInput = document.getElementById('captured-image-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const trainBtn = document.getElementById('train-btn');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                alert("Cannot access webcam. Please check permissions.");
+            });
+
+        function captureFrame() {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/jpeg');
+            capturedInput.value = dataURL;
+            canvas.style.display = 'block';
+            video.style.display = 'none';
+        }
+
+        function resetFrame() {
+            canvas.style.display = 'none';
+            video.style.display = 'block';
+            capturedInput.value = '';
+        }
+
+        const totalFrames = 15;
+        const interval = 10000 / totalFrames;
+
+        async function startTraining() {
+            const rollNo = document.getElementById('id_Roll_no').value.trim();
+            if (!rollNo) {
+                alert("Please enter Roll Number before training.");
+                return;
+            }
+
+            trainBtn.disabled = true;
+            submitBtn.disabled = true;
+
+            for (let i = 1; i <= totalFrames; i++) {
+                await captureAndSendFrame(i, rollNo);
+                await new Promise(r => setTimeout(r, interval));
+            }
+
+            alert("Training complete. You can now submit the form.");
+            submitBtn.disabled = false;
+            trainBtn.disabled = false;
+        }
+
+        async function captureAndSendFrame(frameNumber, rollNo) {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+
+            const formData = new FormData();
+            formData.append('roll_no', rollNo);
+            formData.append('frame', new File([blob], `frame${frameNumber}.jpg`, {type: 'image/jpeg'}));
+
+            try {
+                const response = await fetch("{% url 'upload_frame' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    console.log(`Frame ${frameNumber} uploaded`);
+                } else {
+                    console.error("Error uploading frame:", result.error);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            }
+        }
+    </script>
+
+</body>
+</html>

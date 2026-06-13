@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Homepage</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .admin-hp {
+            height: 5%;
+            width: 100%;
+            background-color: rgb(3, 48, 107);
+            color: white;
+        }
+
+        .admin-content {
+            padding-top: 10%;
+            height: 100%;
+            width: 25%;
+            background-color: rgb(247, 247, 239);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .admin-button {
+            width: 100%;
+            background-color: rgb(3, 48, 107);
+            height: 80px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            border-radius: 10px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-hp a {
+            color: white;
+            text-decoration: none;
+            padding-right: 20%;
+        }
+
+        .chart{
+            position: absolute;  
+            top: 10%;           
+            right: 20%;         
+            height: 50%;       
+            width: 50%;        
+             
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            
+        }
+
+        .percentages {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+            padding-left: 10%;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Admin Header -->
+    <div class="admin-hp d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-shield-lock"></i> Admin Homepage</h4>
+        <h3><a href="{% url 'hp' %}"><i class="bi bi-x"></i></a></h3>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="admin-content">
+        <a href="{% url 'admin_dept' %}" class="btn btn-primary admin-button"><i class="bi bi-building me-2"></i> department management</a>
+        <a href="{% url 'admin_stu' %}" class="btn btn-primary admin-button"><i class="bi bi-people"></i> student management</a>
+        <a href="{% url 'attendancelogs' %}" class="btn btn-primary admin-button"><i class="bi bi-calendar-check"></i> view attendance logs</a>
+        <a href="{% url 'student_profiles' %}" class="btn btn-primary admin-button"><i class="bi bi-person-badge"></i> student profile</a>
+    </div>
+
+    <!-- Attendance Chart -->
+    <div class="chart container mt-5">
+        <h5>Today's Attendance Overview</h5>
+        <canvas id="attendanceChart" width="50" height="50"></canvas> <!-- canvas-HTML5 element used for drawing graphics -->
+
+        <div class="percentages mt-3">
+            <p><strong>Present:</strong> {{ today_logins }} ({{ present_percent }}%)</p>
+            <p><strong>Absent:</strong> {{ total_students|add:"-today_logins" }} {{ absent_percent }}%</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const totalStudents = Number("{{ total_students|default:0 }}");
+            const todayLogins = Number("{{ today_logins|default:0 }}");
+            const absentStudents = totalStudents - todayLogins;
+
+            const ctx = document.getElementById('attendanceChart');
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Absent'],
+                    datasets: [{
+                        data: [todayLogins, absentStudents],
+                        backgroundColor: ['#4caf50', '#f44336'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

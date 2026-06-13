@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <title>student list</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    </head>
+
+    <style>
+
+        .studentlist-head{
+            height: 5%;
+            width: 100%;
+            color: white;
+            background-color: rgb(3, 48, 107);;
+        }
+
+        .student-count{
+            padding-top: 5%;
+        }
+
+        .filter{
+            padding-top: 5%;
+            
+        }
+
+        .student-buttons{
+            padding-top: 5%;
+        }
+
+        .studentlist-head a{
+            text-decoration: none;
+            color: white;
+            padding: 20%;
+        }
+
+        .filter button{
+            background-color: rgb(114, 114, 120);
+            border-color: rgb(114, 114, 120);
+        }
+
+        
+    </style>
+
+    <body>
+
+
+        <div class="studentlist-head d-flex align-items-center gap-3 mb-4">
+            
+            <h4><a href="{% url 'admin_homepage' %}" ><i class="bi bi-arrow-left-circle-fill"></i></a></h4>
+            <h4>Student List</h4>
+            
+
+        </div>
+
+
+        
+
+        <div class="student-count">
+
+            <h4>Total Students: {{total_student}}</h4>
+            <h4>Total male students:{{total_male_student}} </h4>
+            <h4>Total female students:{{total_female_student}} </h4>
+
+        </div>
+
+
+        <div class="student-buttons">
+
+            <a href="{% url 'admin_stuform' %}" class="btn btn-primary"><i class="bi bi-person-plus"></i> add student</a>
+            <a href="{% url 'export_students_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i> Export as PDF</a>
+
+        </div>
+
+
+        <div class="filter">
+
+        
+        <form method="GET">
+            {{myfilter.form.as_p}}
+            <button type="submit" class="btn btn-primary" ><i class="bi bi-search"></i> search</button>
+
+        </form>
+
+        </div>
+
+
+        <table class="table table-bordered table-striped align-middle text-center shadow-sm">
+            <tr>
+                <td><b>Fullname</b></td>
+                <td><b>Roll Number</b></td>
+                <td><b>Gender</b></td>
+                <td><b>Department</b></td>
+                <td><b>Year</b></td>
+                <td><b>Phone number</b></td>
+                <td><b>Email</b></td>
+
+            </tr>
+
+            {% for student in student_list %}
+
+            <tr>
+                <td>{{student.Fullname}}</td>
+                <td>{{student.Roll_no}}</td>
+                <td>{{student.gender}}</td>
+                <td>{{student.Department}}</td>
+                <td>{{student.Year}}</td>
+                <td>{{student.phone_number}}</td>
+                <td>{{student.Email}}</td>
+                <td><a href="{% url 'stuupdate' student.id %}" class="btn btn-primary"><i class="bi bi-pencil-square"></i> edit</a></td>
+                <td><a href="{% url 'studelete' student.id %}" class="btn btn-primary"><i class="bi bi-trash"></i> delete</a>
+                <td><a href="{% url 'student_detail' student.id %}" class="btn btn-primary"><i class="bi bi-eye"></i> view details</a></td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</html>

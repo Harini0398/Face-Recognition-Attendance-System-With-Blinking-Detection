@@ -1,0 +1,56 @@
+
+<html>
+
+  <head>
+    <title>student login page(featil view)</title>
+  </head>
+
+  <style>
+
+    .login-content{
+      padding: 10%;
+    }
+
+    .login-head{
+      height: 5%;
+      width: 100%;
+      color: white;
+      background-color: rgb(3, 48, 107);
+    }
+
+    .login-head a{
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+
+  <body>
+
+    <div class="login-head ">
+      <h1>student login page</h1>
+      <a href="{% url 'stu_homepage' %}">back</a>
+
+    </div>
+
+    <div class="login-content">
+      <h2>Student Login</h2>
+      <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">submit</button>
+      </form>
+
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:red;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+    </div>
+
+  </body>
+
+</html>
+
+
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 6px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center;">Student List Report</h2>
+
+<table>
+  <tr>
+    <th>Full Name</th>
+    <th>Roll No</th>
+    <td>Gender</td>
+    <th>Department</th>
+    <th>Year</th>
+    <th>Phone</th>
+    <th>Email</th>
+  </tr>
+  {% for student in student_list %}
+  <tr>
+    <td>{{ student.Fullname }}</td>
+    <td>{{ student.Roll_no }}</td>
+    <td>{{student.gender}}</td>
+    <td>{{ student.Department }}</td>
+    <td>{{ student.Year }}</td>
+    <td>{{ student.phone_number }}</td>
+    <td>{{ student.Email }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>

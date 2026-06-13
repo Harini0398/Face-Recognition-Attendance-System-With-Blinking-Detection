@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <title>student profile</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    </head>
+
+    <style>
+        .profile-head{
+            height: 5%;
+            width: 100%;
+            color: white;
+            background-color: rgb(3, 48, 107);
+        }
+
+        .profile-head a{
+            color: white;
+            text-decoration: none;
+            padding: 20%;
+        }
+
+        .profile-content{
+            padding-top: 5%;
+        }
+    </style>
+
+    <body>
+
+        <div class="profile-head d-flex align-items-center gap-3 mb-4">
+
+
+            <h4><a href="{% url 'admin_homepage' %}" ><i class="bi bi-arrow-left-circle-fill"></i></a></h4>
+            <h4>Student Profiles</h4>
+            
+
+        </div>
+
+
+        <div class="profile-content">
+
+            <form method="get">
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Search by filename">
+                <button type="submit">Search</button>
+            </form>
+
+            {% for image in images %}
+                <div style="margin: 10px;">
+                    <img src="{{ image.url }}" alt="Student" style="height: 150px; border: 1px solid #ccc; padding: 5px;">
+                    <p>{{ image.filename }}</p>
+                </div>
+            {% empty %}
+                <p>No images found matching your search criteria.</p>
+            {% endfor %}
+
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+</html>
